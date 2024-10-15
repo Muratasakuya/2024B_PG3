@@ -6,13 +6,14 @@
 // c++
 #include <stdio.h>
 #include <iostream>
+#include <functional>
 #include <thread>
 #include <chrono>
+#include <future> 
 
 ///============================================================
 /// function
 ///============================================================
-typedef void (*ResultCallback)(bool);
 
 // サイコロの値をランダムで返す
 int RollDice() {
@@ -20,29 +21,9 @@ int RollDice() {
 	return rand() % 6 + 1;
 }
 
-// ユーザー入力
-void UserGuessProcess(int dice, int guess, ResultCallback callBack) {
+void SetTimeout(int second) {
 
-	bool even = (dice % 2 == 0);
-	bool userEven = (guess == 2);
-
-	// 3秒待機する
-	std::this_thread::sleep_for(std::chrono::seconds(3));
-
-	// コールバック関数で結果表示
-	callBack(even == userEven);
-}
-
-// 結果表示
-void Result(bool isCorrect) {
-
-	if (isCorrect) {
-
-		std::cout << "正解" << std::endl;
-	} else {
-
-		std::cout << "不正解" << std::endl;
-	}
+	std::this_thread::sleep_for(std::chrono::seconds(second));
 }
 
 ///============================================================
@@ -61,15 +42,25 @@ int main() {
 	int guess;
 	std::cin >> guess;
 
-	// 1か2以外だったらもう一回入力させる
-	if (guess != 1 && guess != 2) {
+	// ラムダ式で入力された値をキャプチャして使う
+	auto isOdd = [](int number) -> bool { return number % 2 != 0; };
+	bool userGuessedOdd = (guess == 1);
 
-		std::cout << "無効な入力です。1: 奇数, 2: 偶数" << std::endl;
-		return 1;
+	// 3秒待機
+	SetTimeout(3);
+
+	// boolラムダ関数で判別
+	bool actualOdd = isOdd(dice);
+
+	// 結果表示
+	if ((userGuessedOdd && actualOdd) || (!userGuessedOdd && !actualOdd)) {
+
+		std::cout << "正解" << std::endl;
+	} else {
+
+		std::cout << "不正解" << std::endl;
 	}
-
-	// 結果処理
-	UserGuessProcess(dice, guess, Result);
+	std::cout << "サイコロの出目: " << dice << std::endl;
 
 	return 0;
 }
