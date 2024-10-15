@@ -5,24 +5,29 @@
 
 // c++
 #include <stdio.h>
-#include <algorithm>
 #include <iostream>
-#include <type_traits>
 
 ///============================================================
 /// function
 ///============================================================
-template <typename T>
-T Min(T a, T b) {
+int CalRecursiveWage(int h, int currentWage, int baseWage) {
 
-	return std::min(a, b);
+	if (h == 1) {
+
+		return currentWage;
+	}
+
+	return CalRecursiveWage(h - 1, currentWage, baseWage) * 2 - baseWage;
 }
 
-template <>
-char Min(char a, char b) {
+int CalTotalRecursiveWage(int h, int initWage, int baseWage) {
 
-	std::cout << "数字以外は代入できません" << std::endl;
-	return 0;
+	if (h == 1) {
+
+		return initWage;
+	}
+
+	return CalTotalRecursiveWage(h - 1, initWage, baseWage) + CalRecursiveWage(h, initWage, baseWage);
 }
 
 ///============================================================
@@ -30,25 +35,35 @@ char Min(char a, char b) {
 ///============================================================
 int main() {
 
-	// <typename int>
-	int intA = 2;
-	int intB = 4;
-	std::cout << "Min(int): " << Min(intA, intB) << std::endl;
+	// 一般的な賃金体系の時給
+	const int normalWage = 1072;
 
-	// <typename float>
-	float floatA = 8.0f;
-	float floatB = 4.0f;
-	std::cout << "Min(float): " << Min(floatA, floatB) << std::endl;
+	// 再帰的な賃金体系の初期時給と増加係数
+	const int initRecursiveWage = 100;
+	const int baseWage = 50;
 
-	// <typename double>
-	double doubleA = 3.9812;
-	double doubleB = 3.14159;
-	std::cout << "Min(double): " << Min(doubleA, doubleB) << std::endl;
+	int totalNormalWage = 0;
+	int totalRecursiveWage = 0;
 
-	// <typename char>
-	char charA = 'a';
-	char charB = 'b';
-	Min(charA, charB);
+	// 再帰的な賃金が一般的な賃金よりも多くなるまで
+	int hour = 0;
+	while (true) {
+
+		hour++;
+
+		// 一般的な賃金体系の累計
+		totalNormalWage += normalWage;
+
+		// 再帰的な賃金体系の累計
+		totalRecursiveWage = CalTotalRecursiveWage(hour, initRecursiveWage, baseWage);
+
+		// 再帰的な賃金が一般的な賃金を超えたら
+		if (totalRecursiveWage > totalNormalWage) {
+
+			std::cout << " 再帰的な賃金が一般的な賃金を超えた " << hour << " hours" << std::endl;
+			break;
+		}
+	}
 
 	return 0;
 }
