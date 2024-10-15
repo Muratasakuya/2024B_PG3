@@ -6,28 +6,43 @@
 // c++
 #include <stdio.h>
 #include <iostream>
+#include <thread>
+#include <chrono>
 
 ///============================================================
 /// function
 ///============================================================
-int CalRecursiveWage(int h, int currentWage, int baseWage) {
+typedef void (*ResultCallback)(bool);
 
-	if (h == 1) {
+// サイコロの値をランダムで返す
+int RollDice() {
 
-		return currentWage;
-	}
-
-	return CalRecursiveWage(h - 1, currentWage, baseWage) * 2 - baseWage;
+	return rand() % 6 + 1;
 }
 
-int CalTotalRecursiveWage(int h, int initWage, int baseWage) {
+// ユーザー入力
+void UserGuessProcess(int dice, int guess, ResultCallback callBack) {
 
-	if (h == 1) {
+	bool even = (dice % 2 == 0);
+	bool userEven = (guess == 2);
 
-		return initWage;
+	// 3秒待機する
+	std::this_thread::sleep_for(std::chrono::seconds(3));
+
+	// コールバック関数で結果表示
+	callBack(even == userEven);
+}
+
+// 結果表示
+void Result(bool isCorrect) {
+
+	if (isCorrect) {
+
+		std::cout << "正解" << std::endl;
+	} else {
+
+		std::cout << "不正解" << std::endl;
 	}
-
-	return CalTotalRecursiveWage(h - 1, initWage, baseWage) + CalRecursiveWage(h, initWage, baseWage);
 }
 
 ///============================================================
@@ -35,35 +50,26 @@ int CalTotalRecursiveWage(int h, int initWage, int baseWage) {
 ///============================================================
 int main() {
 
-	// 一般的な賃金体系の時給
-	const int normalWage = 1072;
+	// 乱数初期化
+	srand(static_cast<uint32_t>(time(0)));
 
-	// 再帰的な賃金体系の初期時給と増加係数
-	const int initRecursiveWage = 100;
-	const int baseWage = 50;
+	// サイコロ
+	int dice = RollDice();
 
-	int totalNormalWage = 0;
-	int totalRecursiveWage = 0;
+	// ユーザーに入力させる
+	std::cout << "サイコロの出目は偶数か奇数どっちでしょうか？？ 1: 奇数, 2: 偶数";
+	int guess;
+	std::cin >> guess;
 
-	// 再帰的な賃金が一般的な賃金よりも多くなるまで
-	int hour = 0;
-	while (true) {
+	// 1か2以外だったらもう一回入力させる
+	if (guess != 1 && guess != 2) {
 
-		hour++;
-
-		// 一般的な賃金体系の累計
-		totalNormalWage += normalWage;
-
-		// 再帰的な賃金体系の累計
-		totalRecursiveWage = CalTotalRecursiveWage(hour, initRecursiveWage, baseWage);
-
-		// 再帰的な賃金が一般的な賃金を超えたら
-		if (totalRecursiveWage > totalNormalWage) {
-
-			std::cout << " 再帰的な賃金が一般的な賃金を超えた " << hour << " hours" << std::endl;
-			break;
-		}
+		std::cout << "無効な入力です。1: 奇数, 2: 偶数" << std::endl;
+		return 1;
 	}
+
+	// 結果処理
+	UserGuessProcess(dice, guess, Result);
 
 	return 0;
 }
