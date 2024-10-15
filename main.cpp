@@ -70,6 +70,7 @@ int main() {
 
 	// 結果処理
 	UserGuessProcess(dice, guess, Result);
+	std::cout << "サイコロの出目: " << dice << std::endl;
 
 	return 0;
 }
