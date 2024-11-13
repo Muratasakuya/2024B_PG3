@@ -11,7 +11,7 @@ void Circle::Size() {
 
 void Circle::Draw() {
 
-	std::cout << "Size: " << area_ << std::endl;
+	std::cout << "CircleSize: " << area_ << std::endl;
 }
 
 void Rectangle::Size() {
@@ -21,5 +21,5 @@ void Rectangle::Size() {
 
 void Rectangle::Draw() {
 
-	std::cout << "Size: " << area_ << std::endl;
+	std::cout << "RectangleSize: " << area_ << std::endl;
 }
