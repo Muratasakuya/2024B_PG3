@@ -19,7 +19,7 @@ public:
 
 	virtual ~ICar() {}
 
-	virtual void DriveSound() const {};
+	virtual void DriveSound() const = 0;
 
 };
 
@@ -36,7 +36,7 @@ public:
 	}
 };
 
-class ElectricCar 
+class ElectricCar
 	: public ICar {
 public:
 
@@ -45,7 +45,7 @@ public:
 	}
 };
 
-class HybridCar 
+class HybridCar
 	: public ICar {
 public:
 
