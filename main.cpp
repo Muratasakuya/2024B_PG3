@@ -3,7 +3,7 @@
 /// include
 ///=================================================================================
 // classes
-#include <Classes/Car.h>
+#include <Classes/Shape.h>
 
 // c++
 #include <stdio.h>
@@ -15,18 +15,17 @@
 ///=================================================================================
 int main() {
 
-	std::unique_ptr<ICar> gasolineCar = std::make_unique<GasolineCar>();
-	std::unique_ptr<ICar> electricCar = std::make_unique<ElectricCar>();
-	std::unique_ptr<ICar> hybridCar = std::make_unique<HybridCar>();
+	std::vector<std::unique_ptr<IShape>> shapes;
 
-	std::cout << "ガソリン車: ";
-	gasolineCar->DriveSound();
+	shapes.push_back(std::make_unique<Circle>(5.0));
+	shapes.push_back(std::make_unique<Rectangle>(4.0, 6.0));
 
-	std::cout << "電気自動車: ";
-	electricCar->DriveSound();
+	for (const auto& shape : shapes) {
 
-	std::cout << "ハイブリッド車: ";
-	hybridCar->DriveSound();
+		shape->Size();
+		shape->Draw();
+	}
 
 	return 0;
+
 }
