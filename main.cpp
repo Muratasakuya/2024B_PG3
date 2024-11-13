@@ -3,10 +3,11 @@
 /// include
 ///=================================================================================
 // objects
-#include <Classes/Enemy.h>
+#include <Classes/Comparator.h>
 
 // c++
 #include <stdio.h>
+#include <iostream>
 #include <memory>
 #include <chrono>
 #include <thread> 
@@ -16,31 +17,12 @@
 ///=================================================================================
 int main() {
 
-	std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>();
-
-	auto startTime = std::chrono::steady_clock::now();
-	auto lastTime = startTime;
-	const std::chrono::seconds phaseDuration(2); // 2秒おき
-	const std::chrono::seconds maxDuration(8);   // 8秒後閉じる
-
-	while (true) {
-
-		auto currentTime = std::chrono::steady_clock::now();
-
-		if (currentTime - startTime >= maxDuration) {
-			break;
-		}
-
-		// 時間経過で切り替え
-		if (currentTime - lastTime >= phaseDuration) {
-
-			enemy->Update();
-			lastTime = currentTime;
-		}
-
-		std::this_thread::sleep_for(std::chrono::milliseconds(50));
-
-	}
+	std::cout << "int and int: " << Comparator<int, int>::Min(5, 10) << std::endl;
+	std::cout << "int and float: " << Comparator<int, float>::Min(5, 10.5f) << std::endl;
+	std::cout << "int and double: " << Comparator<int, double>::Min(5, 10.5) << std::endl;
+	std::cout << "float and float: " << Comparator<float, float>::Min(5.5f, 10.5f) << std::endl;
+	std::cout << "float and double: " << Comparator<float, double>::Min(5.5f, 10.5) << std::endl;
+	std::cout << "double and double: " << Comparator<double, double>::Min(5.5, 10.5) << std::endl;
 
 	return 0;
 }
