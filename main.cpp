@@ -1,66 +1,46 @@
 
-///============================================================
+///=================================================================================
 /// include
-///============================================================
+///=================================================================================
+// objects
+#include <Objects/Enemy.h>
 
 // c++
 #include <stdio.h>
-#include <iostream>
-#include <functional>
-#include <thread>
+#include <memory>
 #include <chrono>
-#include <future> 
+#include <thread> 
 
-///============================================================
-/// function
-///============================================================
-
-// サイコロの値をランダムで返す
-int RollDice() {
-
-	return rand() % 6 + 1;
-}
-
-void SetTimeout(int second) {
-
-	std::this_thread::sleep_for(std::chrono::seconds(second));
-}
-
-///============================================================
+///=================================================================================
 /// main
-///============================================================
+///=================================================================================
 int main() {
 
-	// 乱数初期化
-	srand(static_cast<uint32_t>(time(0)));
+	std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>();
 
-	// サイコロ
-	int dice = RollDice();
+	auto startTime = std::chrono::steady_clock::now();
+	auto lastTime = startTime;
+	const std::chrono::seconds phaseDuration(2); // 2秒おき
+	const std::chrono::seconds maxDuration(8);   // 8秒後閉じる
 
-	// ユーザーに入力させる
-	std::cout << "サイコロの出目は偶数か奇数どっちでしょうか？？ 1: 奇数, 2: 偶数";
-	int guess;
-	std::cin >> guess;
+	while (true) {
 
-	// ラムダ式で入力された値をキャプチャして使う
-	auto isOdd = [](int number) -> bool { return number % 2 != 0; };
-	bool userGuessedOdd = (guess == 1);
+		auto currentTime = std::chrono::steady_clock::now();
 
-	// 3秒待機
-	SetTimeout(3);
+		if (currentTime - startTime >= maxDuration) {
+			break;
+		}
 
-	// boolラムダ関数で判別
-	bool actualOdd = isOdd(dice);
+		// 時間経過で切り替え
+		if (currentTime - lastTime >= phaseDuration) {
 
-	// 結果表示
-	if ((userGuessedOdd && actualOdd) || (!userGuessedOdd && !actualOdd)) {
+			enemy->Update();
+			lastTime = currentTime;
+		}
 
-		std::cout << "正解" << std::endl;
-	} else {
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
-		std::cout << "不正解" << std::endl;
 	}
-	std::cout << "サイコロの出目: " << dice << std::endl;
 
 	return 0;
 }
