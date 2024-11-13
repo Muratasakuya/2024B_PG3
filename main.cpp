@@ -2,27 +2,31 @@
 ///=================================================================================
 /// include
 ///=================================================================================
-// objects
-#include <Classes/Comparator.h>
+// classes
+#include <Classes/ICar.h>
 
 // c++
 #include <stdio.h>
 #include <iostream>
 #include <memory>
-#include <chrono>
-#include <thread> 
 
 ///=================================================================================
 /// main
 ///=================================================================================
 int main() {
 
-	std::cout << "int and int: " << Comparator<int, int>::Min(5, 10) << std::endl;
-	std::cout << "int and float: " << Comparator<int, float>::Min(5, 10.5f) << std::endl;
-	std::cout << "int and double: " << Comparator<int, double>::Min(5, 10.5) << std::endl;
-	std::cout << "float and float: " << Comparator<float, float>::Min(5.5f, 10.5f) << std::endl;
-	std::cout << "float and double: " << Comparator<float, double>::Min(5.5f, 10.5) << std::endl;
-	std::cout << "double and double: " << Comparator<double, double>::Min(5.5, 10.5) << std::endl;
+	std::unique_ptr<ICar> gasolineCar = std::make_unique<GasolineCar>();
+	std::unique_ptr<ICar> electricCar = std::make_unique<ElectricCar>();
+	std::unique_ptr<ICar> hybridCar = std::make_unique<HybridCar>();
+
+	std::cout << "ガソリン車: ";
+	gasolineCar->DriveSound();
+
+	std::cout << "電気自動車: ";
+	electricCar->DriveSound();
+
+	std::cout << "ハイブリッド車: ";
+	hybridCar->DriveSound();
 
 	return 0;
 }
