@@ -5,44 +5,42 @@
 
 // c++
 #include <iostream>
-#include <vector>
-#include <fstream>
-#include <sstream>
-#include <algorithm>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+
+std::mutex mtx;
+std::condition_variable cv;
+int current = 1;
+
+/// <summary>
+/// スレッドごとに呼び出す
+/// </summary>
+void PrintThread(int id, const std::string& message) {
+
+	std::unique_lock<std::mutex> lock(mtx);
+
+	cv.wait(lock, [id]() { return current == id; });
+
+	// 文字出力
+	std::cout << message << std::endl;
+
+	current++;
+	cv.notify_all();
+}
 
 ///=================================================================================
 /// main
 ///=================================================================================
 int main() {
 
-	// txtファイルパス
-	const std::string filePath = "PG3_2024_03_02.txt";
-	std::ifstream inputFile(filePath);
+	std::thread t1(PrintThread, 1, "thread 1");
+	std::thread t2(PrintThread, 2, "thread 2");
+	std::thread t3(PrintThread, 3, "thread 3");
 
-	std::vector<std::string> emails;
-
-	std::string line;
-	while (std::getline(inputFile, line)) {
-
-		// コンマ区切りで追加
-		std::stringstream ss(line);
-		std::string email;
-		while (std::getline(ss, email, ',')) {
-
-			emails.push_back(email);
-		}
-	}
-	inputFile.close();
-
-	// 若い順
-	std::sort(emails.begin(), emails.end());
-
-	std::cout << "学籍番号順: " << std::endl;
-	for (const auto& email : emails) {
-
-		std::cout << email << std::endl;
-	}
+	t1.join();
+	t2.join();
+	t3.join();
 
 	return 0;
-
 }
