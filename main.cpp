@@ -45,10 +45,9 @@ int main() {
 	int totalNormalWage = 0;
 	int totalRecursiveWage = 0;
 
-	// 再帰的な賃金が一般的な賃金よりも多くなるまで
+	// 1時間ごとに出力
 	int hour = 0;
 	while (true) {
-
 		hour++;
 
 		// 一般的な賃金体系の累計
@@ -57,10 +56,14 @@ int main() {
 		// 再帰的な賃金体系の累計
 		totalRecursiveWage = CalTotalRecursiveWage(hour, initRecursiveWage, baseWage);
 
-		// 再帰的な賃金が一般的な賃金を超えたら
-		if (totalRecursiveWage > totalNormalWage) {
+		// 出力
+		std::cout << hour << "時間目: "
+			<< "一般的な賃金累計 = " << totalNormalWage
+			<< "円, 再帰的な賃金累計 = " << totalRecursiveWage << "円" << std::endl;
 
-			std::cout << " 再帰的な賃金が一般的な賃金を超えた " << hour << " hours" << std::endl;
+		// 再帰的な賃金が一般的な賃金を超えたら終了
+		if (totalRecursiveWage > totalNormalWage) {
+			std::cout << "再帰的な賃金が一般的な賃金を超えたのは " << hour << "時間目" << std::endl;
 			break;
 		}
 	}
