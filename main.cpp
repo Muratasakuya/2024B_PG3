@@ -5,42 +5,32 @@
 
 // c++
 #include <iostream>
-#include <thread>
-#include <mutex>
-#include <condition_variable>
-
-std::mutex mtx;
-std::condition_variable cv;
-int current = 1;
-
-/// <summary>
-/// スレッドごとに呼び出す
-/// </summary>
-void PrintThread(int id, const std::string& message) {
-
-	std::unique_lock<std::mutex> lock(mtx);
-
-	cv.wait(lock, [id]() { return current == id; });
-
-	// 文字出力
-	std::cout << message << std::endl;
-
-	current++;
-	cv.notify_all();
-}
+#include <string>
+#include <chrono>
 
 ///=================================================================================
 /// main
 ///=================================================================================
 int main() {
 
-	std::thread t1(PrintThread, 1, "thread 1");
-	std::thread t2(PrintThread, 2, "thread 2");
-	std::thread t3(PrintThread, 3, "thread 3");
+	std::string a(1000000, 'a');
 
-	t1.join();
-	t2.join();
-	t3.join();
+	// コピーにかかる時間
+	auto startCopy = std::chrono::high_resolution_clock::now();
+	std::string b = a;
+	auto endCopy = std::chrono::high_resolution_clock::now();
+
+	// 移動にかかる時間
+	auto startMove = std::chrono::high_resolution_clock::now();
+	std::string c = std::move(a); 
+	auto endMove = std::chrono::high_resolution_clock::now();
+
+	// 結果出力
+	auto copyDuration = std::chrono::duration_cast<std::chrono::microseconds>(endCopy - startCopy).count();
+	auto moveDuration = std::chrono::duration_cast<std::chrono::microseconds>(endMove - startMove).count();
+
+	std::cout << "コピーにかかった時間: " << copyDuration << " μs" << std::endl;
+	std::cout << "移動にかかった時間: " << moveDuration << " μs" << std::endl;
 
 	return 0;
 }
